@@ -1,0 +1,8 @@
+{
+    "env": {
+      "MONGO_DB_CONNECTION": "mongodb+srv://jt-user1:KeRHniXmgkUBZx4l@final-7a57g.mongodb.net/test?retryWrites=true&w=majority",
+      "NODE_ENV": "development",
+      "PORT": 3000,
+      "SECRET_KEY": "secretKey"
+    }
+  }
