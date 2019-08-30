@@ -1,28 +1,24 @@
-//const { NODE_ENV, PORT } = process.env
+const { NODE_ENV, PORT } = process.env
 const express = require("express");
 const app = express();
 const morgan = require("morgan");
 const bodyParser = require("body-parser");
 const mongoose = require("mongoose")
 
+app.use(require('cors')({
+    origin: 'http://localhost:3000',
+    optionsSuccessStatus: 200
+  }));
+
 require('./db/connection')()
 
-const personRoutes = require('./api/routes/person');
-const assignmentRoutes = require('./api/routes/assignment');
-
 app.use(require('morgan')('dev'))
-//app.use(bodyParser.urlencoded({extended: false}));
 app.use(bodyParser.json())
 
-app.use('/person', personRoutes);
-app.use('/assignment', assignmentRoutes);
+app.use(require('./api/middleware/set-token'))
 
-
-app.use((reg, res, next) => {
-    res.status(200).json({
-        message: 'it works'
-    })
-})
+app.use('/api', require('./api/routes/logins'))
+app.use('/person', require('./api/routes/person'));
 
 app.use((req,res,next) => {
     const error = new Error('Route not found');
@@ -30,7 +26,7 @@ app.use((req,res,next) => {
     next(error);
 })
 
-app.use((req,res,next) => {
+app.use((err,req,res,next) => {
 res.status(err.status || 500);
 res.json({
     error: {message: error.message}

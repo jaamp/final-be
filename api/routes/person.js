@@ -1,11 +1,22 @@
 const router = require('express').Router();
-const Person = require('../models/person.js');
+const Person = require('../models/person');
+const { isLoggedIn, isSameUser } = require('../middleware/logins')
+const { validate } = require('../middleware/person')
 const mongoose = require('mongoose');
 
-router.get('/', (req,res, next) => {
-    res.status(200).json({
-        message: "from persons"
-    })
+router.get('/', async (req, res, next) => {
+    const status = 200
+    //const response = await Person.find({ "assignment.graded": {$eq:true}}).select('fname lname email assignment')
+    //const response = await Person.find({ "assignment.graded": {$eq:false}}).select('fname lname email assignment')
+    //const response = await Person.find({ role: {$eq:"student"}}).select('fname lname email assignment')
+    const response = await Person.find({ role: {$eq:"student"}}).select('fname lname email assignment.score')
+    res.json({ status, response })
+  })
+
+router.get('/:id', async (req,res, next) => {
+    const status = 200
+    const response = await Person.findById(req.params.id).select('assignment.title')
+    res.json({ status, response })
 });
 
 router.post('/', async (req, res, next) => {
